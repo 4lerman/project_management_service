@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS tasks CASCADE;
+DROP TYPE IF EXISTS task_type;
+DROP TYPE IF EXISTS task_priority;
