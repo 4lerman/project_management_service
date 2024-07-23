@@ -13,6 +13,15 @@ type UserStore interface {
 	GetUserTasks(int) ([]Task, error)
 }
 
+type TaskStore interface {
+	ListTasks() ([]Task, error)
+	CreateTask(Task) error
+	GetTaskById(int) (*Task, error)
+	GetTasksByQuery(string, string) ([]Task, error)
+	UpdateTask(int, Task) error
+	DeleteTask(int) error
+}
+
 type UserRole string
 
 const (
@@ -23,7 +32,7 @@ const (
 
 type User struct {
 	ID           int       `json:"id"`
-	FullName    string    `json:"full_name"`
+	FullName     string    `json:"full_name"`
 	Email        string    `json:"email"`
 	RegisterDate time.Time `json:"register_date"`
 	UserRole     UserRole  `json:"user_role"`
@@ -59,11 +68,29 @@ type Task struct {
 
 type CreateUserPayload struct {
 	FullName string   `json:"full_name" validate:"required"`
-	Email     string   `json:"email" validate:"required"`
-	UserRole  UserRole `json:"user_role" validate:"required"`
+	Email    string   `json:"email" validate:"required"`
+	UserRole UserRole `json:"user_role" validate:"required"`
 }
 
 type UpdateUserPayload struct {
-	FullName string   `json:"full_name" validate:"required"`
-	UserRole  UserRole `json:"user_role" validate:"required"`
+	FullName string   `json:"full_name" validate:"omitempty"`
+	UserRole UserRole `json:"user_role" validate:"omitempty"`
+}
+
+type CreateTaskPayload struct {
+	Title        string       `json:"title" validate:"required"`
+	Descript     string       `json:"descript" validate:"omitempty"`
+	TaskType     TaskType     `json:"task_type" validate:"required"`
+	TaskPriority TaskPriority `json:"task_priority" validate:"required"`
+	UserId       int          `json:"user_id" validate:"required"`
+	ProjectId    int          `json:"project_id" validate:"required"`
+}
+
+type UpdateTaskPayload struct {
+	Title        string       `json:"title" validate:"required"`
+	Descript     string       `json:"descript" validate:"required"`
+	TaskType     TaskType     `json:"task_type" validate:"required"`
+	TaskPriority TaskPriority `json:"task_priority" validate:"required"`
+	UserId       int          `json:"user_id" validate:"required"`
+	ProjectId    int          `json:"project_id" validate:"required"`
 }

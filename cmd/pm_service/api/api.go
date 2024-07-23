@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/4lerman/pm_service/internal/service/tasks"
 	"github.com/4lerman/pm_service/internal/service/users"
 	"github.com/gorilla/mux"
 )
@@ -26,10 +27,15 @@ func (s *APIServer) Run() error {
 	subRouter := router.PathPrefix("/api/v1").Subrouter()
 
 	usersRouter := subRouter.PathPrefix("/users").Subrouter()
+	tasksRouter := subRouter.PathPrefix("/tasks").Subrouter()
 
-	userStore := users.NewStore(s.db)
-	userService := users.NewHandler(userStore)
-	userService.RegisterRoutes(usersRouter)
+	usersStore := users.NewStore(s.db)
+	usersService := users.NewHandler(usersStore)
+	usersService.RegisterRoutes(usersRouter)
+
+	tasksStore := tasks.NewStore(s.db)
+	tasksService := tasks.NewHandler(tasksStore)
+	tasksService.RegisterRoutes(tasksRouter)
 
 	log.Println("Listening on", s.addr)
 	return http.ListenAndServe(s.addr, router)
