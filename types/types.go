@@ -22,6 +22,16 @@ type TaskStore interface {
 	DeleteTask(int) error
 }
 
+type ProjectStore interface {
+	ListProjects() ([]Project, error)
+	CreateProject(Project) error
+	GetProjectById(int) (*Project, error)
+	GetProjectsByQuery(string, string) ([]Project, error)
+	UpdateProject(int, Project) error
+	DeleteProject(int) error
+	GetProjectTasks(int) ([]Task, error)
+}
+
 type UserRole string
 
 const (
@@ -66,6 +76,15 @@ type Task struct {
 	UpdatedAt    time.Time    `json:"updated_at"`
 }
 
+type Project struct {
+	ID        int       `json:"id"`
+	Title     string    `json:"title"`
+	Descript  string    `json:"descript"`
+	ManagerId int       `json:"manager_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 type CreateUserPayload struct {
 	FullName string   `json:"full_name" validate:"required"`
 	Email    string   `json:"email" validate:"required"`
@@ -93,4 +112,16 @@ type UpdateTaskPayload struct {
 	TaskPriority TaskPriority `json:"task_priority" validate:"required"`
 	UserId       int          `json:"user_id" validate:"required"`
 	ProjectId    int          `json:"project_id" validate:"required"`
+}
+
+type CreateProjectPayload struct {
+	Title     string `json:"title" validate:"required"`
+	Descript  string `json:"descript" validate:"omitempty"`
+	ManagerId int    `json:"manager_id" validate:"required"`
+}
+
+type UpdateProjectPayload struct {
+	Title     string `json:"title" validate:"required"`
+	Descript  string `json:"descript" validate:"required"`
+	ManagerId int    `json:"manager_id" validate:"required"`
 }

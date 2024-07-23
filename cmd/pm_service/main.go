@@ -7,7 +7,7 @@ import (
 
 	"github.com/4lerman/pm_service/cmd/pm_service/api"
 	"github.com/4lerman/pm_service/internal/config"
-	"github.com/4lerman/pm_service/internal/db"
+	"github.com/4lerman/pm_service/pkg/db"
 )
 
 func main() {

@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/4lerman/pm_service/internal/service/projects"
 	"github.com/4lerman/pm_service/internal/service/tasks"
 	"github.com/4lerman/pm_service/internal/service/users"
 	"github.com/gorilla/mux"
@@ -28,6 +29,7 @@ func (s *APIServer) Run() error {
 
 	usersRouter := subRouter.PathPrefix("/users").Subrouter()
 	tasksRouter := subRouter.PathPrefix("/tasks").Subrouter()
+	projectsRouter := subRouter.PathPrefix("/projects").Subrouter()
 
 	usersStore := users.NewStore(s.db)
 	usersService := users.NewHandler(usersStore)
@@ -36,6 +38,10 @@ func (s *APIServer) Run() error {
 	tasksStore := tasks.NewStore(s.db)
 	tasksService := tasks.NewHandler(tasksStore)
 	tasksService.RegisterRoutes(tasksRouter)
+
+	projectsStore := projects.NewStore(s.db)
+	projectsService := projects.NewHandler(projectsStore)
+	projectsService.RegisterRoutes(projectsRouter)
 
 	log.Println("Listening on", s.addr)
 	return http.ListenAndServe(s.addr, router)
