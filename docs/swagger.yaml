@@ -1,0 +1,916 @@
+basePath: /api/v1
+definitions:
+  types.CreateProjectPayload:
+    properties:
+      descript:
+        type: string
+      manager_id:
+        type: integer
+      title:
+        type: string
+    required:
+    - manager_id
+    - title
+    type: object
+  types.CreateTaskPayload:
+    properties:
+      descript:
+        type: string
+      project_id:
+        type: integer
+      task_priority:
+        $ref: '#/definitions/types.TaskPriority'
+      task_type:
+        $ref: '#/definitions/types.TaskType'
+      title:
+        type: string
+      user_id:
+        type: integer
+    required:
+    - project_id
+    - task_priority
+    - task_type
+    - title
+    - user_id
+    type: object
+  types.CreateUserPayload:
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      user_role:
+        $ref: '#/definitions/types.UserRole'
+    required:
+    - email
+    - full_name
+    - user_role
+    type: object
+  types.Project:
+    properties:
+      created_at:
+        type: string
+      descript:
+        type: string
+      id:
+        type: integer
+      manager_id:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  types.Task:
+    properties:
+      created_at:
+        type: string
+      descript:
+        type: string
+      id:
+        type: integer
+      project_id:
+        type: integer
+      task_priority:
+        $ref: '#/definitions/types.TaskPriority'
+      task_type:
+        $ref: '#/definitions/types.TaskType'
+      title:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  types.TaskPriority:
+    enum:
+    - new
+    - in_process
+    - done
+    type: string
+    x-enum-varnames:
+    - New
+    - In_Process
+    - Done
+  types.TaskType:
+    enum:
+    - low
+    - medium
+    - high
+    type: string
+    x-enum-varnames:
+    - Low
+    - Medium
+    - High
+  types.UpdateProjectPayload:
+    properties:
+      descript:
+        type: string
+      manager_id:
+        type: integer
+      title:
+        type: string
+    required:
+    - descript
+    - manager_id
+    - title
+    type: object
+  types.UpdateTaskPayload:
+    properties:
+      descript:
+        type: string
+      project_id:
+        type: integer
+      task_priority:
+        $ref: '#/definitions/types.TaskPriority'
+      task_type:
+        $ref: '#/definitions/types.TaskType'
+      title:
+        type: string
+      user_id:
+        type: integer
+    required:
+    - descript
+    - project_id
+    - task_priority
+    - task_type
+    - title
+    - user_id
+    type: object
+  types.UpdateUserPayload:
+    properties:
+      full_name:
+        type: string
+      user_role:
+        $ref: '#/definitions/types.UserRole'
+    type: object
+  types.User:
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: integer
+      register_date:
+        type: string
+      user_role:
+        $ref: '#/definitions/types.UserRole'
+    type: object
+  types.UserRole:
+    enum:
+    - admin
+    - manager
+    - developer
+    type: string
+    x-enum-varnames:
+    - Admin
+    - Manager
+    - Developer
+host: localhost:5000
+info:
+  contact: {}
+  description: This is a API server for project management service.
+  title: Project Management Service
+  version: "1.0"
+paths:
+  /projects:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all projects
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Project'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List all projects
+      tags:
+      - Projects
+    post:
+      consumes:
+      - application/json
+      description: Create a new project with the given details
+      parameters:
+      - description: Project details
+        in: body
+        name: project
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateProjectPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new project
+      tags:
+      - Projects
+  /projects/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a project by its ID
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete project by ID
+      tags:
+      - Projects
+    get:
+      consumes:
+      - application/json
+      description: Get a project by its ID
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Project'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get project by ID
+      tags:
+      - Projects
+    put:
+      consumes:
+      - application/json
+      description: Update project details by ID
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Project details
+        in: body
+        name: project
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateProjectPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update project details
+      tags:
+      - Projects
+  /projects/{id}/tasks:
+    get:
+      consumes:
+      - application/json
+      description: Get tasks associated with a project by project ID
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Task'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get tasks by project ID
+      tags:
+      - Projects
+  /projects/search:
+    get:
+      consumes:
+      - application/json
+      description: Search projects by title or manager ID
+      parameters:
+      - description: Project title
+        in: query
+        name: title
+        type: string
+      - description: Manager ID
+        in: query
+        name: manager
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Project'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Search projects by query
+      tags:
+      - Projects
+  /tasks:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all tasks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Task'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List all tasks
+      tags:
+      - Tasks
+    post:
+      consumes:
+      - application/json
+      description: Create a new task with the given details
+      parameters:
+      - description: Task details
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateTaskPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new task
+      tags:
+      - Tasks
+  /tasks/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a task by its ID
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete task by ID
+      tags:
+      - Tasks
+    get:
+      consumes:
+      - application/json
+      description: Get a task by its ID
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Task'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get task by ID
+      tags:
+      - Tasks
+    put:
+      consumes:
+      - application/json
+      description: Update task details by ID
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Task details
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateTaskPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update task details
+      tags:
+      - Tasks
+  /tasks/search:
+    get:
+      consumes:
+      - application/json
+      description: Search tasks by title, status, priority, assignee, or project
+      parameters:
+      - description: Task title
+        in: query
+        name: title
+        type: string
+      - description: Task status
+        in: query
+        name: status
+        type: string
+      - description: Task priority
+        in: query
+        name: priority
+        type: string
+      - description: Task assignee
+        in: query
+        name: assignee
+        type: string
+      - description: Project ID
+        in: query
+        name: project
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Task'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Search tasks by query
+      tags:
+      - Tasks
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.User'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List all users
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the given details
+      parameters:
+      - description: User details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateUserPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new user
+      tags:
+      - Users
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete user by ID
+      tags:
+      - Users
+    get:
+      consumes:
+      - application/json
+      description: Get a user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.User'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get user by ID
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Update user details by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateUserPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update user details
+      tags:
+      - Users
+  /users/{id}/tasks:
+    get:
+      consumes:
+      - application/json
+      description: Get all tasks assigned to a user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Task'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get user tasks
+      tags:
+      - Users
+  /users/search:
+    get:
+      consumes:
+      - application/json
+      description: Search users by name or email
+      parameters:
+      - description: User name
+        in: query
+        name: name
+        type: string
+      - description: User email
+        in: query
+        name: email
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.User'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Search users by name or email
+      tags:
+      - Users
+swagger: "2.0"

@@ -31,6 +31,14 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/{id}/tasks", h.handleGetUserTasks).Methods(http.MethodGet)
 }
 
+// @Summary List all users
+// @Description Get a list of all users
+// @Tags Users
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} types.User
+// @Failure 500 {object} map[string]string
+// @Router /users [get]
 func (h *Handler) handleListUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := h.store.ListUsers()
 
@@ -42,6 +50,16 @@ func (h *Handler) handleListUsers(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, users)
 }
 
+// @Summary Create a new user
+// @Description Create a new user with the given details
+// @Tags Users
+// @Accept  json
+// @Produce  json
+// @Param user body types.CreateUserPayload true "User details"
+// @Success 201 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /users [post]
 func (h *Handler) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 	var payload types.CreateUserPayload
 	if err := utils.ParseJSON(r, &payload); err != nil {
@@ -70,6 +88,16 @@ func (h *Handler) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// @Summary Get user by ID
+// @Description Get a user by their ID
+// @Tags Users
+// @Accept  json
+// @Produce  json
+// @Param id path int true "User ID"
+// @Success 200 {object} types.User
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /users/{id} [get]
 func (h *Handler) handleGetUserById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -90,6 +118,18 @@ func (h *Handler) handleGetUserById(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, user)
 }
 
+// @Summary Update user details
+// @Description Update user details by ID
+// @Tags Users
+// @Accept  json
+// @Produce  json
+// @Param id path int true "User ID"
+// @Param user body types.UpdateUserPayload true "User details"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /users/{id} [put]
 func (h *Handler) handleUpdateUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -126,6 +166,17 @@ func (h *Handler) handleUpdateUser(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, map[string]string{"msg": "Updated successfully"})
 }
 
+// @Summary Delete user by ID
+// @Description Delete a user by their ID
+// @Tags Users
+// @Accept  json
+// @Produce  json
+// @Param id path int true "User ID"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /users/{id} [delete]
 func (h *Handler) handleDeleteUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -145,6 +196,17 @@ func (h *Handler) handleDeleteUser(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, map[string]string{"msg": "Deleted successfully"})
 }
 
+// @Summary Get user tasks
+// @Description Get all tasks assigned to a user
+// @Tags Users
+// @Accept  json
+// @Produce  json
+// @Param id path int true "User ID"
+// @Success 200 {array} types.Task
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /users/{id}/tasks [get]
 func (h *Handler) handleGetUserTasks(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -169,6 +231,17 @@ func (h *Handler) handleGetUserTasks(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, tasks_list)
 }
 
+// @Summary Search users by name or email
+// @Description Search users by name or email
+// @Tags Users
+// @Accept  json
+// @Produce  json
+// @Param name query string false "User name"
+// @Param email query string false "User email"
+// @Success 200 {array} types.User
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /users/search [get]
 func (h *Handler) handleUserByNameOrEmail(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 	email := r.URL.Query().Get("email")

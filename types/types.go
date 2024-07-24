@@ -59,9 +59,9 @@ const (
 type TaskPriority string
 
 const (
-	New        TaskType = "new"
-	In_Process TaskType = "in_process"
-	Done       TaskType = "done"
+	New        TaskPriority = "new"
+	In_Process TaskPriority = "in_process"
+	Done       TaskPriority = "done"
 )
 
 type Task struct {

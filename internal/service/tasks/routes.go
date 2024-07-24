@@ -30,17 +30,33 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/{id}", h.handleDeleteTask).Methods(http.MethodDelete)
 }
 
+// @Summary List all tasks
+// @Description Get a list of all tasks
+// @Tags Tasks
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} types.Task
+// @Failure 500 {object} map[string]string
+// @Router /tasks [get]
 func (h *Handler) handleListTasks(w http.ResponseWriter, r *http.Request) {
-	users, err := h.store.ListTasks()
-
+	tasks, err := h.store.ListTasks()
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
-
-	utils.WriteJSON(w, http.StatusOK, users)
+	utils.WriteJSON(w, http.StatusOK, tasks)
 }
 
+// @Summary Create a new task
+// @Description Create a new task with the given details
+// @Tags Tasks
+// @Accept  json
+// @Produce  json
+// @Param task body types.CreateTaskPayload true "Task details"
+// @Success 201 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /tasks [post]
 func (h *Handler) handleCreateTask(w http.ResponseWriter, r *http.Request) {
 	var payload types.CreateTaskPayload
 	if err := utils.ParseJSON(r, &payload); err != nil {
@@ -69,9 +85,18 @@ func (h *Handler) handleCreateTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJSON(w, http.StatusCreated, map[string]string{"msg": "Created successfully"})
-
 }
 
+// @Summary Get task by ID
+// @Description Get a task by its ID
+// @Tags Tasks
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Task ID"
+// @Success 200 {object} types.Task
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /tasks/{id} [get]
 func (h *Handler) handleGetTaskById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -83,15 +108,27 @@ func (h *Handler) handleGetTaskById(w http.ResponseWriter, r *http.Request) {
 
 	taskId, _ := strconv.Atoi(id)
 
-	user, err := h.store.GetTaskById(taskId)
+	task, err := h.store.GetTaskById(taskId)
 	if err != nil {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("failed to get task by id: %v", err))
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, user)
+	utils.WriteJSON(w, http.StatusOK, task)
 }
 
+// @Summary Update task details
+// @Description Update task details by ID
+// @Tags Tasks
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Task ID"
+// @Param task body types.UpdateTaskPayload true "Task details"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /tasks/{id} [put]
 func (h *Handler) handleUpdateTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -132,6 +169,17 @@ func (h *Handler) handleUpdateTask(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, map[string]string{"msg": "Updated successfully"})
 }
 
+// @Summary Delete task by ID
+// @Description Delete a task by its ID
+// @Tags Tasks
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Task ID"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /tasks/{id} [delete]
 func (h *Handler) handleDeleteTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -151,6 +199,20 @@ func (h *Handler) handleDeleteTask(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, map[string]string{"msg": "Deleted successfully"})
 }
 
+// @Summary Search tasks by query
+// @Description Search tasks by title, status, priority, assignee, or project
+// @Tags Tasks
+// @Accept  json
+// @Produce  json
+// @Param title query string false "Task title"
+// @Param status query string false "Task status"
+// @Param priority query string false "Task priority"
+// @Param assignee query string false "Task assignee"
+// @Param project query string false "Project ID"
+// @Success 200 {array} types.Task
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /tasks/search [get]
 func (h *Handler) handleGetTaskByQuery(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	var queryType, query string
