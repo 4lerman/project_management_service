@@ -1,0 +1,22 @@
+# .dockerignore
+
+
+# Project-specific
+.idea
+.vscode
+*.log
+
+# Go specific
+bin/
+*.exe
+*.out
+
+# Dependency directories
+vendor/
+
+# Docker-specific
+Dockerfile
+docker-compose.yml
+
+.git
+.gitignore
