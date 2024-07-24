@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . .
 
-RUN apk add --no-cache make netcat
+RUN apk add --no-cache make
 
 RUN make build
 
