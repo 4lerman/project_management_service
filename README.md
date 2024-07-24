@@ -1,4 +1,4 @@
-# Project Managemenet Service
+# Project Management Service
 
 ## Overview
 The Project Management Service is a backend service designed to manage users, projects and their associated tasks. It provides a RESTful API to create, read, update, and delete users, projects and tasks, as well as search functionality for both projects and tasks. The service is built using Go, Gorilla Mux for routing, and Docker for containerization.
